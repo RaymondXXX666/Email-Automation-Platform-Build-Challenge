@@ -113,3 +113,11 @@ Campaign logs include:
 - In the submission environment, outbound delivery at the external email API boundary may depend on external network/API availability; failures are captured in send_logs and exposed through the logs endpoint for observability.
 - The project was developed feature-by-feature using GitHub feature branches and pull requests.
 - Resend free tier without custom domain, testing limited to verified own email, sender uses onboarding@resend.dev
+
+## Reflection
+
+This project was completed as a timeboxed MVP. I prioritized the core backend application workflow — contacts, templates, campaigns, scheduling, cron processing, and logging — over optional UI work, since the brief allowed a backend-only application.
+
+A key takeaway was the importance of observability in external integrations. While the application-side campaign pipeline was implemented end-to-end, outbound delivery at the email API boundary depended on external environment and network reliability. Capturing those outcomes through `send_logs`, campaign status, and `/health` made the system easier to verify and debug.
+
+With more time, I would focus on hardening the live email integration, adding retry and backoff after or during hardening the live email integration, and then introducing a lightweight UI for easier manual operation.
