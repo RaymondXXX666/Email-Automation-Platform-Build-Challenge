@@ -1,5 +1,9 @@
 import { prisma } from '../lib/prisma.js';
 import { AppError } from '../middleware/error-handler.js';
+import { Resend } from 'resend';
+import { env } from '../config/env.js';
+
+const resend = new Resend(env.RESEND_API_KEY);
 
 type CreateCampaignInput = {
   name: string;
@@ -148,22 +152,35 @@ export async function sendCampaignNow(id: string) {
         email: contact.email,
       });
 
+      const { data, error } = await resend.emails.send({
+        from: env.RESEND_FROM_EMAIL,
+        to: [contact.email],
+        subject: renderedSubject,
+        html: renderedHtmlBody,
+      });
+      
+      if (error) {
+        throw new Error(
+          typeof error.message === 'string' ? error.message : 'Resend send failed'
+        );
+      }
+      
       await prisma.sendLog.create({
         data: {
           campaignId: campaign.id,
           contactId: contact.id,
           status: 'sent',
-          resendMessageId: null,
+          resendMessageId: data?.id ?? null,
           errorMessage: null,
         },
       });
-
+      
       sentCount += 1;
-
-      console.log('Mock send success', {
+      
+      console.log('Resend send success', {
         to: contact.email,
+        resendMessageId: data?.id ?? null,
         subject: renderedSubject,
-        html: renderedHtmlBody,
       });
     } catch (error) {
       failedCount += 1;
