@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum CampaignStatus {
+  draft
+  scheduled
+  sending
+  sent
+  failed
+}
+
+enum SendLogStatus {
+  sent
+  failed
+}
+
+model Contact {
+  id         String    @id @default(cuid())
+  email      String    @unique
+  firstName  String    @map("first_name")
+  lastName   String    @map("last_name")
+  tags       Json
+  subscribed Boolean   @default(true)
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  sendLogs   SendLog[]
+
+  @@map("contacts")
+}
+
+model Template {
+  id        String     @id @default(cuid())
+  name      String
+  subject   String
+  htmlBody  String     @map("html_body")
+  variables Json
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  campaigns Campaign[]
+
+  @@map("templates")
+}
+
+model Campaign {
+  id          String         @id @default(cuid())
+  name        String
+  templateId  String         @map("template_id")
+  targetTags  Json           @map("target_tags")
+  scheduledAt DateTime?      @map("scheduled_at")
+  status      CampaignStatus @default(draft)
+  sentCount   Int            @default(0) @map("sent_count")
+  failedCount Int            @default(0) @map("failed_count")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  template    Template       @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  sendLogs    SendLog[]
+
+  @@map("campaigns")
+}
+
+model SendLog {
+  id               String        @id @default(cuid())
+  campaignId       String        @map("campaign_id")
+  contactId        String        @map("contact_id")
+  status           SendLogStatus
+  resendMessageId  String?       @map("resend_message_id")
+  errorMessage     String?       @map("error_message")
+  sentAt           DateTime      @default(now()) @map("sent_at")
+  campaign         Campaign      @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  contact          Contact       @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@map("send_logs")
+}
