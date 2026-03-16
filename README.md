@@ -37,6 +37,38 @@ npm run dev
 ### Health
 - `GET /health`
 
+### Templates
+- `GET /templates`
+- `POST /templates`
+- `PUT /templates/:id`
+- `DELETE /templates/:id`
+- `POST /templates/:id/preview`
+
+### Campaigns
+
+- `POST /campaigns`
+- `PATCH /campaigns/:id/schedule`
+- `POST /campaigns/:id/send-now`
+- `GET /campaigns/:id/status`
+
+### Scheduling
+
+- A background cron job runs every 60 seconds
+- Due campaigns with `status = scheduled` and `scheduled_at <= now` are automatically processed
+
+### Sending flow
+
+- Contacts are filtered by matching `target_tags`
+- Templates are interpolated per recipient
+- Send results are recorded in `send_logs`
+- Campaign status and counters are updated after processing
+
+### Current implementation note
+
+- The current implementation uses a mock send flow for local development and verification, with send events logged and tracked through the same campaign processing pipeline
+
 ## Notes
 - SQLite was chosen to minimize setup time and maximize delivery speed.
-- Remaining features will build on the existing schema without major restructuring.
+- Request validation is handled with Zod.
+- Template preview uses lightweight {{variable_name}} replacement for speed and simplicity.
+- The project is being developed feature-by-feature using GitHub feature branches and pull requests.
