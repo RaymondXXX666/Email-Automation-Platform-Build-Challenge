@@ -37,6 +37,15 @@ npm run dev
 ### Health
 - `GET /health`
 
+### Templates
+- `GET /templates`
+- `POST /templates`
+- `PUT /templates/:id`
+- `DELETE /templates/:id`
+- `POST /templates/:id/preview`
+
 ## Notes
 - SQLite was chosen to minimize setup time and maximize delivery speed.
-- Remaining features will build on the existing schema without major restructuring.
+- Request validation is handled with Zod.
+- Template preview uses lightweight {{variable_name}} replacement for speed and simplicity.
+- The project is being developed feature-by-feature using GitHub feature branches and pull requests.
