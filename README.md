@@ -21,12 +21,13 @@ npx prisma db push
 npm run dev
 ```
 
-## Implemented so far
-- Project scaffold
-- Prisma schema for contacts, templates, campaigns, send_logs
-- Feature 1 started: contacts CRUD + import
-- Health endpoint
-- Error handling + validation foundation
+## Architecture Overview
+- Express routes handle HTTP requests
+- Service layer contains business logic
+- Prisma manages persistence in SQLite
+- A cron job polls due scheduled campaigns every 60 seconds
+- Campaign sends are recorded in send_logs
+- /health reports API, database, and cron runtime visibility
 
 ## API
 ### Contacts
@@ -66,9 +67,6 @@ npm run dev
 - Send results are recorded in `send_logs`
 - Campaign status and counters are updated after processing
 
-### Current implementation note
-
-- The current implementation uses a mock send flow for local development and verification, with send events logged and tracked through the same campaign processing pipeline
 
 ## Notes
 - SQLite was chosen to minimize setup time and maximize delivery speed.
@@ -76,5 +74,5 @@ npm run dev
 - Template preview uses lightweight {{variable_name}} replacement for speed and simplicity.
 - The project is being developed feature-by-feature using GitHub feature branches and pull requests.
 - Scheduled campaigns are processed by a cron job running every 60 seconds.
-- The current implementation uses a mock send flow for local verification, while preserving the campaign processing, logging, and scheduling pipeline.
+- In the submission environment, outbound delivery at the external email API boundary may depend on external network/API availability; failures are captured in send_logs and exposed through the logs endpoint for observability.
 - The project was developed feature-by-feature using GitHub feature branches and pull requests.
