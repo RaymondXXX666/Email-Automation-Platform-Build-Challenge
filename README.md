@@ -7,8 +7,10 @@ A fast MVP for the AI Coding Implementor assessment using **TypeScript + Express
 - Express
 - Prisma ORM
 - SQLite
+- Zod
+- Cron
 - Resend
-- cron
+- Postman for testing
 
 ## Setup
 ```bash
@@ -50,6 +52,7 @@ npm run dev
 - `PATCH /campaigns/:id/schedule`
 - `POST /campaigns/:id/send-now`
 - `GET /campaigns/:id/status`
+- `GET /campaigns/:id/logs`
 
 ### Scheduling
 
@@ -72,3 +75,6 @@ npm run dev
 - Request validation is handled with Zod.
 - Template preview uses lightweight {{variable_name}} replacement for speed and simplicity.
 - The project is being developed feature-by-feature using GitHub feature branches and pull requests.
+- Scheduled campaigns are processed by a cron job running every 60 seconds.
+- The current implementation uses a mock send flow for local verification, while preserving the campaign processing, logging, and scheduling pipeline.
+- The project was developed feature-by-feature using GitHub feature branches and pull requests.
