@@ -216,6 +216,63 @@ export async function sendCampaignNow(id: string) {
   };
 }
 
+export async function getCampaignLogs(
+  campaignId: string,
+  page: number = 1,
+  limit: number = 10
+) {
+  const campaign = await prisma.campaign.findUnique({
+    where: { id: campaignId },
+  });
+
+  if (!campaign) {
+    throw new AppError(404, 'Campaign not found');
+  }
+
+  const safePage = Number.isNaN(page) || page < 1 ? 1 : page;
+  const safeLimit = Number.isNaN(limit) || limit < 1 ? 10 : limit;
+
+  const skip = (safePage - 1) * safeLimit;
+
+  const [logs, total] = await Promise.all([
+    prisma.sendLog.findMany({
+      where: { campaignId },
+      include: {
+        contact: true,
+      },
+      orderBy: {
+        sentAt: 'desc',
+      },
+      skip,
+      take: safeLimit,
+    }),
+    prisma.sendLog.count({
+      where: { campaignId },
+    }),
+  ]);
+
+  return {
+    page: safePage,
+    limit: safeLimit,
+    total,
+    total_pages: Math.ceil(total / safeLimit),
+    data: logs.map((log) => ({
+      id: log.id,
+      campaign_id: log.campaignId,
+      contact_id: log.contactId,
+      contact: {
+        email: log.contact.email,
+        first_name: log.contact.firstName,
+        last_name: log.contact.lastName,
+      },
+      status: log.status,
+      resend_message_id: log.resendMessageId,
+      error_message: log.errorMessage,
+      sent_at: log.sentAt,
+    })),
+  };
+}
+
 function renderTemplate(content: string, values: Record<string, string>) {
   return content.replace(/\{\{(\w+)\}\}/g, (_match, key) => {
     return values[key] ?? `{{${key}}}`;
