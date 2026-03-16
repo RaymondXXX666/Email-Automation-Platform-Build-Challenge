@@ -30,6 +30,7 @@ npm run dev
 - /health reports API, database, and cron runtime visibility
 
 ## API
+The API runs locally at: http://localhost:3000
 ### Contacts
 - `GET /contacts`
 - `POST /contacts`
@@ -37,8 +38,17 @@ npm run dev
 - `DELETE /contacts/:id`
 - `POST /contacts/import`
 
+  Recommended test:
+	•	Create a contact with tags such as ["vip", "nz"]
+	•	Confirm it appears in GET /contacts
+
 ### Health
 - `GET /health`
+
+Expected result:
+	•	API responds successfully
+	•	Database status is available
+	•	Cron status is visible
 
 ### Templates
 - `GET /templates`
@@ -47,6 +57,10 @@ npm run dev
 - `DELETE /templates/:id`
 - `POST /templates/:id/preview`
 
+Recommended test:
+	•	Create a template using variables such as {{first_name}} and {{email}}
+	•	Use the preview endpoint to verify interpolation
+
 ### Campaigns
 
 - `POST /campaigns`
@@ -54,6 +68,28 @@ npm run dev
 - `POST /campaigns/:id/send-now`
 - `GET /campaigns/:id/status`
 - `GET /campaigns/:id/logs`
+
+Recommended test:
+	1.	Create a campaign using an existing template
+	2.	Check initial status with GET /campaigns/:id/status
+	3.	Schedule it with PATCH /campaigns/:id/schedule
+	4.	Trigger immediate sending with POST /campaigns/:id/send-now
+	5.	Review delivery status and logs with:
+	•	GET /campaigns/:id/status
+	•	GET /campaigns/:id/logs
+
+### Logging and observability
+
+The application includes:
+	•	GET /health for API, database, and cron visibility
+	•	GET /campaigns/:id/logs for paginated send history
+
+Campaign logs include:
+	•	recipient information
+	•	send status
+	•	resend message id
+	•	error message
+	•	send timestamp
 
 ### Scheduling
 
