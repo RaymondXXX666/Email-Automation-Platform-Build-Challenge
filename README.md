@@ -76,3 +76,4 @@ npm run dev
 - Scheduled campaigns are processed by a cron job running every 60 seconds.
 - In the submission environment, outbound delivery at the external email API boundary may depend on external network/API availability; failures are captured in send_logs and exposed through the logs endpoint for observability.
 - The project was developed feature-by-feature using GitHub feature branches and pull requests.
+- Resend free tier without custom domain, testing limited to verified own email, sender uses onboarding@resend.dev
