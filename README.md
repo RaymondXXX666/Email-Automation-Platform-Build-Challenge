@@ -1,6 +1,6 @@
-# Email Automation Platform Assessment
+# Email Automation Platform Challenge in 2 Hours
 
-A fast MVP for the AI Coding Implementor assessment using **TypeScript + Express + Prisma + SQLite**.
+A fast MVP for the AI Coding Implementor challenge in hard 2 hours using **TypeScript + Express + Prisma + SQLite**.
 
 ## Stack
 - Node.js + TypeScript
